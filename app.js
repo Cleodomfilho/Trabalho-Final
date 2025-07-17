@@ -240,7 +240,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-   
+    function createNodeElement(value, x, y) {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'node');
+        g.dataset.value = value;
+        g.style.transform = `translate(${x}px, ${y}px) scale(0)`;
+        g.style.opacity = '0';
+
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('r', 20);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.textContent = value;
+
+        g.appendChild(circle);
+        g.appendChild(text);
+
+        setTimeout(() => {
+            g.style.transform = `translate(${x}px, ${y}px) scale(1)`;
+            g.style.opacity = '1';
+        }, 10);
+
+        return g;
+    }
+
+    function createLinkElement(x1, y1) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('class', 'link');
+        path.setAttribute('d', `M${x1},${y1} L${x1},${y1}`);
+        path.style.opacity = '0';
+        return path;
+    }
+
+    function highlightPath(value) {
+        document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        const pathNodes = bst.find(value, true);
+        if (!pathNodes || pathNodes.length === 0) return;
+
+        for (let i = 0; i < pathNodes.length; i++) {
+            const nodeEl = nodeElements.get(pathNodes[i].value);
+            if (nodeEl && i === pathNodes.length - 1 && pathNodes[i].value === value) {
+                nodeEl.classList.add('highlight');
+            }
+            if (i > 0) {
+                const linkEl = linkElements.get(`${pathNodes[i-1].value}-${pathNodes[i].value}`);
+                if (linkEl) linkEl.classList.add('highlight');
+            }
+        }
+
+        setTimeout(() => {
+            document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+        }, 2500);
+    }
 
     function handleAction(action) {
         const value = parseInt(valorInput.value);
