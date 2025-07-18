@@ -14,6 +14,7 @@
         </header>
 
         <main class="main-content">
+    
             <div class="controls-panel">
                 <div class="card">
                     <h3>Operações</h3>
@@ -31,21 +32,28 @@
                 <div class="card">
                     <h3>Travessias</h3>
                     <div class="button-group-vertical">
-                        <button id="btnPreOrdem">Pré-Ordem (Raiz, Esq, Dir )</button>
+                        <button id="btnPreOrdem">Pré-Ordem (Raiz, Esq, Dir  )</button>
                         <button id="btnEmOrdem">Em Ordem (Esq, Raiz, Dir)</button>
                         <button id="btnPosOrdem">Pós-Ordem (Esq, Dir, Raiz)</button>
                         <button id="btnLargura">Busca em Largura (Níveis)</button>
                     </div>
                 </div>
-
-                <div class="card log-card">
-                    <h3>Log de Eventos</h3>
-                    <div id="log" class="log-area"></div>
-                </div>
             </div>
 
-            <div class="tree-panel">
-                <svg id="tree-svg"></svg>
+            <!-- Área principal com árvore e log -->
+            <div class="tree-and-log-area">
+                <!-- Painel da árvore -->
+                <div class="tree-panel">
+                    <svg id="tree-svg"></svg>
+                </div>
+
+                <!-- Seção de log abaixo da árvore -->
+                <div class="log-section">
+                    <div class="card log-card">
+                        <h3>Log de Eventos</h3>
+                        <div id="log" class="log-area"></div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>

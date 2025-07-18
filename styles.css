@@ -11,6 +11,11 @@
     --path-highlight-color: #f6ad55; /* Laranja para caminho */
     --node-text-color: #ffffff;
     --line-color: #a0aec0;
+    --log-background: #1a202c; /* Fundo escuro para o log */
+    --log-text-color: #e2e8f0; /* Texto claro para o log */
+    --log-success-color: #48bb78; /* Verde para mensagens de sucesso */
+    --log-error-color: #f56565; /* Vermelho para mensagens de erro */
+    --log-info-color: #4299e1; /* Azul para mensagens informativas */
 }
 
 * {
@@ -24,7 +29,7 @@ body {
     background-color: var(--background-color);
     color: var(--text-color);
     line-height: 1.6;
-    overflow: hidden; /* Previne barras de rolagem durante a animação */
+    overflow: hidden;
 }
 
 .container {
@@ -48,6 +53,7 @@ header {
     overflow: hidden;
 }
 
+/* Painel de controles à esquerda */
 .controls-panel {
     width: 350px;
     padding: 1.5rem;
@@ -57,6 +63,32 @@ header {
     flex-direction: column;
     gap: 1.5rem;
     overflow-y: auto;
+}
+
+/* Nova área que contém árvore e log */
+.tree-and-log-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Painel da árvore */
+.tree-panel {
+    flex: 1;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: auto;
+    min-height: 0;
+}
+
+/* Seção do log */
+.log-section {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-color);
 }
 
 .card {
@@ -72,6 +104,10 @@ header {
     color: var(--primary-color);
     border-bottom: 2px solid var(--border-color);
     padding-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    position: relative;
+    padding-left: 1.5rem;
 }
 
 .form-group {
@@ -82,6 +118,7 @@ header {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
+    color: var(--text-color);
 }
 
 input[type="number"] {
@@ -91,6 +128,7 @@ input[type="number"] {
     border-radius: 6px;
     font-size: 1rem;
     transition: border-color 0.2s, box-shadow 0.2s;
+    background-color: #ffffff;
 }
 
 input[type="number"]:focus {
@@ -115,54 +153,132 @@ button {
     border-radius: 6px;
     background-color: var(--secondary-color);
     color: white;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
+    transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button:hover {
     background-color: var(--primary-color);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 button:active {
-    transform: translateY(1px);
+    transform: translateY(0px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 button:disabled {
     background-color: #a0aec0;
     cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
+/* Estilos específicos para a área de log */
 .log-card {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
+    margin: 0;
 }
 
 .log-area {
-    flex: 1;
-    background-color: #edf2f7;
-    border-radius: 6px;
+    height: 120px;
+    background-color: var(--log-background);
+    color: var(--log-text-color);
+    border-radius: 8px;
     padding: 1rem;
     overflow-y: auto;
     font-family: 'Courier New', Courier, monospace;
-    font-size: 0.9rem;
-    min-height: 150px;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    border: 2px solid var(--border-color);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary-color) var(--log-background);
+}
+
+.log-area::-webkit-scrollbar {
+    width: 8px;
+}
+
+.log-area::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+
+.log-area::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 4px;
+}
+
+.log-area::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
 }
 
 .log-area p {
     margin-bottom: 0.5rem;
     word-break: break-word;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+    position: relative;
+    padding-left: 1.5rem;
 }
 
-.tree-panel {
-    flex: 1;
-    padding: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: auto;
+/* Diferentes tipos de mensagens no log */
+.log-area p:last-child {
+
+    background-color: rgba(66, 153, 225, 0.2);
+    border-left: 3px solid var(--log-info-color);
+    animation: highlight-new 0.5s ease-in-out;
+}
+
+.log-area p.success {
+    color: var(--log-success-color);
+    border-left: 3px solid var(--log-success-color);
+}
+
+.log-area p.error {
+    color: var(--log-error-color);
+    border-left: 3px solid var(--log-error-color);
+}
+
+.log-area p.info {
+    color: var(--log-info-color);
+    border-left: 3px solid var(--log-info-color);
+}
+
+.log-area p::before {
+    content: "▶";
+    position: absolute;
+    left: 0.25rem;
+    color: var(--log-info-color);
+    font-size: 0.7rem;
+}
+
+.log-area p.success::before {
+    content: "✓";
+    color: var(--log-success-color);
+}
+
+.log-area p.error::before {
+    content: "✗";
+    color: var(--log-error-color);
+}
+
+@keyframes highlight-new {
+    0% {
+        background-color: rgba(66, 153, 225, 0.4);
+        transform: translateX(-5px);
+    }
+    100% {
+        background-color: rgba(66, 153, 225, 0.2);
+        transform: translateX(0);
+    }
 }
 
 #tree-svg {
@@ -189,7 +305,7 @@ button:disabled {
     fill: var(--node-text-color);
     font-weight: bold;
     text-anchor: middle;
-    -o-table-baseline: middle;
+    dominant-baseline: middle;
     pointer-events: none;
 }
 
@@ -219,8 +335,63 @@ button:disabled {
 /* Classes de destaque */
 .node.highlight circle {
     fill: var(--node-highlight-color);
+    animation: pulse-highlight 1s ease-in-out;
 }
 .link.highlight {
     stroke: var(--path-highlight-color);
     stroke-width: 4px;
+    animation: pulse-path 1s ease-in-out;
+}
+
+/* Animações de destaque */
+@keyframes pulse-highlight {
+    0%, 100% { 
+        fill: var(--node-highlight-color);
+        r: 20;
+    }
+    50% { 
+        fill: #ff8a80;
+        r: 22;
+    }
+}
+
+@keyframes pulse-path {
+    0%, 100% { 
+        stroke-width: 4px;
+        opacity: 1;
+    }
+    50% { 
+        stroke-width: 6px;
+        opacity: 0.8;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .controls-panel {
+        width: 100%;
+        max-height: 250px;
+        order: 1; /* Controles ficam no topo em telas pequenas */
+    }
+    
+    .tree-and-log-area {
+        order: 2; /* Árvore e log ficam abaixo dos controles */
+    }
+    
+    .tree-panel {
+        min-height: 300px; /* Altura mínima para a árvore em mobile */
+    }
+    
+    .log-area {
+        height: 80px; 
+        font-size: 0.8rem;
+    }
+    
+    .log-section {
+        padding: 0.75rem;
+    }
 }
