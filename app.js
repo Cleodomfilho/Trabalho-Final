@@ -1,309 +1,210 @@
-/**
- * SIMULADOR INTERATIVO DE ÁRVORE BINÁRIA DE BUSCA
- * 
- * Este arquivo contém a implementação completa de uma árvore binária de busca
- * com interface visual interativa, incluindo operações de inserção, remoção,
- * busca e diferentes tipos de travessias.
- */
-
-// CLASSE NÓ - Representa cada elemento da árvore
-
-/**
- * Classe que representa um nó individual da árvore binária
- * Cada nó contém um valor e referências para os nós filhos (esquerdo e direito)
- */
 class No {
-    /**
-     * Construtor do nó
-     * @param {number} valor - O valor numérico que será armazenado no nó
-     */
     constructor(valor) {
-        this.valor = valor;        // Valor armazenado no nó
-        this.esquerdo = null;      // Referência para o nó filho à esquerda
-        this.direito = null;       // Referência para o nó filho à direita
+        this.valor = valor;       
+        this.esquerdo = null;      
+        this.direito = null;  
     }
 }
 
-// ==================================================================
-// CLASSE ÁRVORE BINÁRIA DE BUSCA - Estrutura de dados principal
-// ==================================================================
-
-/**
- * Classe que implementa uma Árvore Binária de Busca
- * 
- * Propriedades da Árovre Binária de Busca:
- * - Todos os valores à esquerda de um nó são menores que o valor do nó
- * - Todos os valores à direita de um nó são maiores que o valor do nó
- * - Essas propriedades se aplicam a todas as sub-árvores
- */
 class ArvoreBinariaDeBusca {
-    /**
-     * Construtor da árvore - inicializa com raiz vazia
-     */
+    //Inicializa a árvore com a raiz nula, indicando uma árvore vazia.
+     
     constructor() {
-        this.raiz = null;  // A raiz da árvore
+        this.raiz = null;  // O nó raiz da árvore
     }
 
-    /**
-     *  essa função insere um novo valor na árvore
-     * @param {number} valor - Valor a ser inserido
-     * @returns {ArvoreBinariaDeBusca|undefined} - Retorna a própria árvore ou nada se valor duplicado
-     */
+    //Insere um novo valor na posição correta da árvore, mantendo suas propriedades.
+     
     inserir(valor) {
-        // Cria um novo nó com o valor fornecido
         const novoNo = new No(valor);
         
-        // Se a árvore está vazia, o novo nó se torna a raiz
+        // Caso base: se a árvore está vazia, o novo nó se torna a raiz.
         if (!this.raiz) {
             this.raiz = novoNo;
             return this;
         }
         
-        // Percorre a árvore para encontrar a posição correta
+        // Percorre a árvore para encontrar o local de inserção.
         let atual = this.raiz;
         while (true) {
-            // Não permite valores duplicados
+            // Evita a inserção de valores duplicados, característica de uma ABB.
             if (valor === atual.valor) {
-                return undefined; // Ignora duplicados
+                return undefined; 
             }
             
-            // Se o valor é menor, vai para a esquerda
+            // Decide se navega para a sub-árvore esquerda ou direita.
             if (valor < atual.valor) {
-                // Se não há nó à esquerda, insere aqui
+                // Se o filho esquerdo é nulo, insere o novo nó aqui.
                 if (!atual.esquerdo) {
                     atual.esquerdo = novoNo;
                     return this;
                 }
-                // Continua navegando à esquerda
+                // Continua a busca na sub-árvore esquerda.
                 atual = atual.esquerdo;
             } 
-            // Se o valor é maior, vai para a direita
             else {
-                // Se não há nó à direita, insere aqui
+                // Se o filho direito é nulo, insere o novo nó aqui.
                 if (!atual.direito) {
                     atual.direito = novoNo;
                     return this;
                 }
-                // Continua navegando à direita
+                // Continua a busca na sub-árvore direita.
                 atual = atual.direito;
             }
         }
     }
 
-    /**
-     * Busca um valor na árvore
-     * @param {number} valor - Valor a ser buscado
-     * @param {boolean} obterCaminhoDoNo - Se true, retorna o caminho percorrido até o nó
-     * @returns {boolean|Array} - true/false se encontrou, ou array com caminho se solicitado
-     */
+    //Busca um valor específico na árvore
     buscar(valor, obterCaminhoDoNo = false) {
-        // Se a árvore está vazia
+        // Se a árvore não possui raiz, o valor não pode ser encontrado.
         if (!this.raiz) {
             return obterCaminhoDoNo ? [] : false;
         }
         
         let atual = this.raiz;
-        const caminho = []; // Array para armazenar o caminho percorrido
+        const caminho = []; // Armazena a sequência de nós visitados durante a busca.
         
-        // Percorre a árvore seguindo as regras da ensinadas de 
+        // Percorre a árvore até encontrar o nó ou chegar a um nó nulo.
         while (atual) {
-            caminho.push(atual); // Adiciona o nó atual ao caminho
+            caminho.push(atual); // Adiciona o nó atual ao caminho.
             
-            // Se o valor buscado é menor, vai para a esquerda
+            // Navega de acordo com a propriedade da ABB.
             if (valor < atual.valor) {
                 atual = atual.esquerdo;
             } 
-            // Se o valor buscado é maior, vai para a direita
             else if (valor > atual.valor) {
                 atual = atual.direito;
             } 
-            // Encontrou o valor
             else {
+                // Valor encontrado.
                 return obterCaminhoDoNo ? caminho : true;
             }
         }
         
-        // Não encontrou o valor
+        // Valor não encontrado na árvore.
         return obterCaminhoDoNo ? caminho : false;
     }
 
-    /**
-     * Remove um valor da árvore mantendo as propriedades da Árvore Binária de Busca
-     * @param {number} valor - Valor a ser removido
-     */
+    //Remove um valor da árvore, reestruturando ela para manter suas propriedades.
     remover(valor) {
         this.raiz = this._removerNo(this.raiz, valor);
     }
 
-    /**
-     * Método auxiliar recursivo para remoção de nós
-     * @param {No} no - Nó atual sendo analisado
-     * @param {number} valor - Valor a ser removido
-     * @returns {No|null} - O nó atualizado após a remoção
-     */
+    // Método auxiliar recursivo para a remoção de nós.
     _removerNo(no, valor) {
-        // Caso base: nó não existe
+        // Caso base: nó não existe na árvore.
         if (!no) return null;
         
-        // Se o valor é menor, continua na sub-árvore esquerda
+        // Busca o nó a ser removido na sub-árvore apropriada.
         if (valor < no.valor) {
             no.esquerdo = this._removerNo(no.esquerdo, valor);
             return no;
         } 
-        // Se o valor é maior, continua na sub-árvore direita
         else if (valor > no.valor) {
             no.direito = this._removerNo(no.direito, valor);
             return no;
         } 
-        // Encontrou o nó a ser removido
         else {
-            // Caso 1: Nó folha (sem filhos)
+            // Nó a ser removido encontrado.
+            
+            // Caso 1: Nó folha ou com apenas um filho.
             if (!no.esquerdo && !no.direito) {
-                return null;
+                return null; // Remove o nó.
             }
+            if (!no.esquerdo) return no.direito;  // Retorna o filho direito.
+            if (!no.direito) return no.esquerdo;  // Retorna o filho esquerdo.
             
-            // Caso 2: Nó com apenas um filho
-            if (!no.esquerdo) return no.direito;  // Só tem filho direito
-            if (!no.direito) return no.esquerdo;  // Só tem filho esquerdo
-            
-            // Caso 3: Nó com dois filhos
-            // Encontra o sucessor (menor valor na sub-árvore direita)
+            // Caso 2: Nó com dois filhos.
+            // Encontra o menor valor na sub-árvore direita
             let sucessor = this._encontrarMenorNo(no.direito);
             
-            // Substitui o valor do nó pelo valor do sucessor
+            // Substitui o valor do nó a ser removido pelo valor do sucessor.
             no.valor = sucessor.valor;
             
-            // Remove o sucessor da sub-árvore direita
+            // Remove o sucessor da sub-árvore direita.
             no.direito = this._removerNo(no.direito, sucessor.valor);
             
             return no;
         }
     }
 
-    /**
-     * Encontra o nó com menor valor em uma sub-árvore
-     * @param {No} no - Nó raiz da sub-árvore
-     * @returns {No} - Nó com menor valor
-     */
+    //Encontra o nó com o menor valor em uma sub-árvore dada.
     _encontrarMenorNo(no) {
-        // O menor valor sempre está na extrema esquerda
         while (no.esquerdo) {
             no = no.esquerdo;
         }
         return no;
     }
 
-    // MÉTODOS DE TRAVESSIA
-
-    /**
-     * TRAVESSIA PRÉ-ORDEM (Raiz → Esquerda → Direita)
-     * Visita primeiro a raiz, depois a sub-árvore esquerda, por fim a direita
-     
-      @returns {Array} - Array com valores na ordem de visitação
-     */
+    // MÉTODOS DE TRAVESSIA 
+    
+    //Realiza a travessia Pré-Ordem
     preOrdem() {
         const dados = [];
-        // Chama o método auxiliar começando pela raiz
         this._preOrdemNo(this.raiz, dados);
         return dados;
     }
 
-    /**
-     * Método auxiliar para travessia pré-ordem
-     * @param {No} no - Nó atual sendo visitado
-     * @param {Array} dados - Array para armazenar os valores visitados
-     */
+    // Método auxiliar para a travessia Pré-Ordem.
     _preOrdemNo(no, dados) {
-        // Condição de parada: nó nulo
         if (no !== null) {
-            // 1. Visita a raiz (nó atual)
-            dados.push(no.valor);
-            // 2. Percorre a sub-árvore esquerda
-            this._preOrdemNo(no.esquerdo, dados);
-            // 3. Percorre a sub-árvore direita
-            this._preOrdemNo(no.direito, dados);
+            dados.push(no.valor); // Visita a raiz.
+            this._preOrdemNo(no.esquerdo, dados); // Percorre a sub-árvore esquerda.
+            this._preOrdemNo(no.direito, dados); // Percorre a sub-árvore direita.
         }
     }
 
-    /**
-     * TRAVESSIA EM ORDEM (Esquerda → Raiz → Direita)
-     * Visita primeiro a sub-árvore esquerda, depois a raiz, por fim a direita
-     
-      @returns {Array} - Array com valores em ordem crescente
-     */
+    //Realiza a travessia Em Ordem
     emOrdem() {
         const dados = [];
         this._emOrdemNo(this.raiz, dados);
         return dados;
     }
 
-    /**
-     * Método auxiliar para travessia em ordem
-     * @param {No} no - Nó atual sendo visitado
-     * @param {Array} dados - Array para armazenar os valores visitados
-     */
+    // Método auxiliar para a travessia Em Ordem.
     _emOrdemNo(no, dados) {
         if (no !== null) {
-            // 1. Percorre a sub-árvore esquerda
-            this._emOrdemNo(no.esquerdo, dados);
-            // 2. Visita a raiz (nó atual)
-            dados.push(no.valor);
-            // 3. Percorre a sub-árvore direita
-            this._emOrdemNo(no.direito, dados);
+            this._emOrdemNo(no.esquerdo, dados); // Percorre a sub-árvore esquerda.
+            dados.push(no.valor); // Visita a raiz.
+            this._emOrdemNo(no.direito, dados); // Percorre a sub-árvore direita.
         }
     }
 
-    /**
-     * TRAVESSIA PÓS-ORDEM (Esquerda → Direita → Raiz)
-     * Visita primeiro as sub-árvores filhas, depois a raiz
-     
-       @returns {Array} - Array com valores na ordem pós-ordem
-     */
+    //Realiza a travessia Pós-Ordem
     posOrdem() {
         const dados = [];
         this._posOrdemNo(this.raiz, dados);
         return dados;
     }
 
-    /**
-     * Método que auxilia na travessia pós-ordem
-     * @param {No} no - Nó atual sendo visitado
-     * @param {Array} dados - Array para armazenar os valores visitados
-     */
+    //Método auxiliar para a travessia Pós-Ordem.
+    
     _posOrdemNo(no, dados) {
         if (no !== null) {
-            // 1. Percorre a sub-árvore esquerda
-            this._posOrdemNo(no.esquerdo, dados);
-            // 2. Percorre a sub-árvore direita
-            this._posOrdemNo(no.direito, dados);
-            // 3. Visita a raiz (nó atual)
-            dados.push(no.valor);
+            this._posOrdemNo(no.esquerdo, dados); // Percorre a sub-árvore esquerda.
+            this._posOrdemNo(no.direito, dados); // Percorre a sub-árvore direita.
+            dados.push(no.valor); // Visita a raiz.
         }
     }
 
-    /**
-     * BUSCA EM LARGURA
-     * Visita os nós nível por nível, da esquerda para a direita
-     * @returns {Array} - Array com valores na ordem de visitação por níveis
-     */
+    //Realiza a Busca em Largura
+
     buscaEmLargura() {
-        const dados = []; // Array para armazenar os valores visitados
-        const fila = []; // Fila para controlar a ordem de visitação
+        const dados = []; // Armazena os valores dos nós na ordem BFS.
+        const fila = []; // Fila para gerenciar os nós a serem visitados.
         
-        // Se a árvore não está vazia, adiciona a raiz na fila
+        // Inicia a Busca em largura
         if (this.raiz) {
             fila.push(this.raiz);
         }
         
-        // Enquanto houver nós na fila
+        // Processa os nós na fila até que ela esteja vazia.
         while (fila.length > 0) {
-            // Remove o primeiro nó da fila
-            let noAtual = fila.shift();
+            let noAtual = fila.shift(); // Remove o primeiro nó da fila.
             
-            // Adiciona o valor do nó atual ao resultado
-            dados.push(noAtual.valor);
+            dados.push(noAtual.valor); // Adiciona o valor do nó atual ao resultado.
             
-            // Adiciona os filhos na fila
+            // Adiciona os filhos do nó atual à fila para processamento futuro.
             if (noAtual.esquerdo) {
                 fila.push(noAtual.esquerdo);
             }
@@ -314,6 +215,24 @@ class ArvoreBinariaDeBusca {
         
         return dados;
     }
+
+    // Calcula a altura da árvore (o número de níveis do nó raiz até a folha mais distante).
+    
+    calcularAltura() {
+        return this._calcularAlturaNo(this.raiz);
+    }
+
+    //Método auxiliar recursivo para calcular a altura de uma sub-árvore.
+
+    _calcularAlturaNo(no) {
+        if (!no) return 0; // A altura de um nó nulo é 0.
+        
+        const alturaEsquerda = this._calcularAlturaNo(no.esquerdo);
+        const alturaDireita = this._calcularAlturaNo(no.direito);
+        
+        // A altura do nó é 1 mais a altura máxima entre suas sub-árvores.
+        return Math.max(alturaEsquerda, alturaDireita) + 1;
+    }
 }
 
 // LÓGICA DA INTERFACE GRÁFICA E ANIMAÇÕES
@@ -322,215 +241,195 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // INICIALIZAÇÃO DE VARIÁVEIS E ELEMENTOS
     
-    // Cria uma nova instância da árvore binária de busca
-    const arvore = new ArvoreBinariaDeBusca();
+    const arvore = new ArvoreBinariaDeBusca(); // Instância para manipulação de dados.
     
-    // Obtém referências para os elementos HTML da interface
-    const svg = document.getElementById('tree-svg');           // Elemento SVG para desenhar a árvore
-    const campoValor = document.getElementById('valor');       // Campo de entrada para valores
-    const areaLog = document.getElementById('log');            // Área para exibir mensagens de log
+    // Referências aos elementos HTML para interação e renderização.
+    const svg = document.getElementById('tree-svg');           // Elemento SVG para renderização gráfica da árvore.
+    const campoValor = document.getElementById('valor');       // Campo de entrada para valores numéricos.
+    const areaLog = document.getElementById('log');            // Área de exibição para mensagens de log do sistema.
     
-    // Maps para armazenar elementos visuais da árvore
-    const elementosNos = new Map();      // Armazena os elementos visuais dos nós
-    const elementosLigacoes = new Map(); // Armazena os elementos visuais das ligações entre nós
+    // Mapas para gerenciar os elementos visuais dos nós e ligações no SVG.
+    const elementosNos = new Map();      // Mapeia valores de nós para seus elementos SVG correspondentes.
+    const elementosLigacoes = new Map(); // Mapeia chaves de ligação (pai-filho) para seus elementos SVG.
 
-    // FUNÇÕES UTILITÁRIAS
+    // FUNÇÕES UTILITÁRIAS - Auxiliares para a interface
 
-    /**
-     * Adiciona uma mensagem ao log da interface
-     * @param {string} mensagem
-     */
     function adicionarLog(mensagem) {
-        // Adiciona a mensagem com formatação
-        areaLog.innerHTML += `<p>> ${mensagem}</p>`;
-        // Faz scroll automático para mostrar a mensagem mais recente
-        areaLog.scrollTop = areaLog.scrollHeight;
+        areaLog.innerHTML += `<p>> ${mensagem}</p>`; // Adiciona a mensagem como um novo parágrafo.
+        areaLog.scrollTop = areaLog.scrollHeight;    // Garante que a última mensagem esteja visível (auto-scroll).
     }
 
-    // FUNÇÕES DE DESENHO E ANIMAÇÃO DA ÁRVORE
+    // FUNÇÕES DE DESENHO E ANIMAÇÃO DA ÁRVORE 
 
-    /**
-     * Função principal para desenhar a árvore visualmente no SVG
-     * Calcula posições, cria elementos visuais e aplica animações
-     */
+    // Função principal responsável por desenhar e atualizar a representação visual da árvore no SVG.
+
     function desenharArvore() {
-        // Obtém as dimensões do elemento SVG
-        const { width: largura } = svg.getBoundingClientRect();
+        // Obtém as dimensões atuais do contêiner da árvore para adaptar o desenho.
+        const containerArvore = document.querySelector('.tree-panel');
+        const { width: largura, height: altura } = containerArvore.getBoundingClientRect();
         
-        // Constantes para o layout visual
-        const raioNo = 20;              // Raio dos círculos que representam os nós
-        const alturaEntreniveis = 70;
+        // Ajusta o viewBox do SVG para corresponder às dimensões do contêiner, garantindo escalabilidade.
+        svg.setAttribute('viewBox', `0 0 ${largura} ${altura}`);
+        svg.setAttribute('width', largura);
+        svg.setAttribute('height', altura);
         
-        // Estruturas para armazenar informações de layout
-        const posicoes = new Map();         // Posições (x, y) de cada nó
-        const nosParaDesenhar = [];         // Lista de nós que devem ser desenhados
-        const ligacoesParaDesenhar = new Map(); // Ligações entre nós pai e filho
+        // Constantes de layout para o desenho dos nós.
+        const raioNo = 20;              // Raio visual dos círculos que representam os nós.
+        
+        // Calcula a altura ideal entre os níveis da árvore, considerando a altura total disponível
+        // e a altura lógica da árvore (número de níveis).
+        const alturaArvore = arvore.calcularAltura();
+        const alturaEntreniveis = Math.max(50, (altura - 2 * raioNo) / (alturaArvore > 0 ? alturaArvore : 1));
+        
+        // Estruturas temporárias para armazenar as posições calculadas e os elementos a serem desenhados.
+        const posicoes = new Map(); // Mapeia o valor do nó para suas coordenadas (x, y).
+        const nosParaDesenhar = []; // Lista de nós que precisam ser renderizados ou atualizados.
+        const ligacoesParaDesenhar = new Map(); // Mapeia chaves de ligação para suas coordenadas de início/fim.
 
-        /**
-         * Função que serve para calcular as posições de todos os nós
-         * @param {No} no - Nó atual sendo posicionado
-         * @param {number} x - Posição horizontal do nó
-         * @param {number} y - Posição vertical do nó
-         * @param {number} nivel - Nível atual na árvore
-         */
-        function calcularPosicoes(no, x, y, nivel) {
-            // Condição de parada: nó nulo
-            if (!no) return;
-            
-            // Armazena a posição do nó atual
-            posicoes.set(no.valor, { x, y });
-            nosParaDesenhar.push(no);
-            
-            // Calcula o espaçamento horizontal baseado no nível
-            // Níveis mais profundos têm menos espaço horizontal
-            const espacamentoHorizontal = largura / Math.pow(2, nivel + 2.5);
+        //Função para calcular as coordenadas (x, y) de cada nó na árvore.
 
-            // Posiciona o filho esquerdo (se existir)
+        function calcularPosicoes(no, x, y, nivel, offsetHorizontal) {
+            if (!no) return; 
+            
+            // Ajusta a coordenada para garantir que o nó não ultrapasse os limites inferiores do contêiner.
+            if (y > altura - raioNo * 2) {
+                y = altura - raioNo * 2;
+            }
+            
+            posicoes.set(no.valor, { x, y }); // Armazena a posição calculada para o nó atual.
+            nosParaDesenhar.push(no);       // Adiciona o nó à lista de nós a serem desenhados.
+            
+            // Calcula o espaçamento horizontal para os filhos, que diminui com a profundidade
+            const espacamentoHorizontalFilho = offsetHorizontal / 2;
+
+            // Processa o filho esquerdo, se existir.
             if (no.esquerdo) {
-                const xFilho = x - espacamentoHorizontal;  // À esquerda do pai
-                const yFilho = y + alturaEntreniveis;      // Um nível abaixo
+                const xFilho = x - espacamentoHorizontalFilho;
+                const yFilho = y + alturaEntreniveis;
                 
-                // Cria a ligação visual entre pai e filho
+                // Registra as coordenadas da ligação entre o nó pai e o filho esquerdo.
                 ligacoesParaDesenhar.set(
                     `${no.valor}-${no.esquerdo.valor}`, 
                     { x1: x, y1: y, x2: xFilho, y2: yFilho }
                 );
                 
-                // Chama para o filho esquerdo
-                calcularPosicoes(no.esquerdo, xFilho, yFilho, nivel + 1);
+                calcularPosicoes(no.esquerdo, xFilho, yFilho, nivel + 1, espacamentoHorizontalFilho);
             }
             
-            // Posiciona o filho direito (se existir)
+            // Processa o filho direito, se existir.
             if (no.direito) {
-                const xFilho = x + espacamentoHorizontal;  // À direita do pai
-                const yFilho = y + alturaEntreniveis;      // Um nível abaixo
+                const xFilho = x + espacamentoHorizontalFilho;
+                const yFilho = y + alturaEntreniveis;     
                 
-                // Cria a ligação visual entre pai e filho
+                // Registra as coordenadas da ligação entre o nó pai e o filho direito.
                 ligacoesParaDesenhar.set(
                     `${no.valor}-${no.direito.valor}`, 
                     { x1: x, y1: y, x2: xFilho, y2: yFilho }
                 );
                 
-                // Chama recursivamente para o filho direito
-                calcularPosicoes(no.direito, xFilho, yFilho, nivel + 1);
+                calcularPosicoes(no.direito, xFilho, yFilho, nivel + 1, espacamentoHorizontalFilho);
             }
         }
 
-        // Se a árvore não está vazia, calcula as posições começando pela raiz
+        // Inicia o cálculo das posições a partir da raiz da árvore, se ela existir.
         if (arvore.raiz) {
-            calcularPosicoes(arvore.raiz, largura / 2, raioNo + 20, 0);
+            // O offset horizontal inicial é a largura total dividida por 4 (para começar com um bom espaçamento)
+            calcularPosicoes(arvore.raiz, largura / 2, raioNo + 20, 0, largura / 4);
         }
 
-        // REMOÇÃO DE ELEMENTOS QUE NÃO EXISTEM MAIS NA ÁRVORE
+        // REMOÇÃO DE ELEMENTOS VISUAIS DE NÓS INEXISTENTES
         
-        // Cria um conjunto com os valores dos nós que ainda existem na árvore
+        // Cria um conjunto com os valores dos nós que ainda estão presentes na estrutura de dados da árvore.
         const nosNaArvore = new Set(nosParaDesenhar.map(n => n.valor));
         
-        // Remove elementos visuais de nós que foram deletados da árvore
+        // Itera sobre os elementos visuais existentes e remove aqueles cujos nós correspondentes foram excluídos.
         elementosNos.forEach((elemento, valor) => {
             if (!nosNaArvore.has(valor)) {
-                // Aplica a animação de saída do nó
-                elemento.style.opacity = '0';
-                elemento.style.transform = `${elemento.style.transform} scale(0)`;
+                elemento.style.opacity = '0'; // Inicia a animação de fade-out.
+                elemento.style.transform = `${elemento.style.transform} scale(0)`; // Inicia a animação de escala.
                 
-                // Remove o elemento após a animação
+                // Remove o elemento após a conclusão da animação.
                 elemento.addEventListener('transitionend', () => elemento.remove());
                 
-                // Remove da estrutura de controle
-                elementosNos.delete(valor);
+                elementosNos.delete(valor); // Remove o nó do mapa de elementos visuais.
             }
         });
 
         // CRIAÇÃO E ATUALIZAÇÃO DE ELEMENTOS VISUAIS DOS NÓS
         
-        // Para cada nó que deve ser desenhado
+        // Processa cada nó que deve ser desenhado.
         nosParaDesenhar.forEach(no => {
             const { x, y } = posicoes.get(no.valor);
             
-            // Verifica se o elemento visual já existe
             let grupoElemento = elementosNos.get(no.valor);
             
-            // Se não existe, cria um novo elemento
+            // Se o elemento visual do nó ainda não existe, cria um novo.
             if (!grupoElemento) {
                 grupoElemento = criarElementoNo(no.valor, x, y);
                 elementosNos.set(no.valor, grupoElemento);
                 svg.appendChild(grupoElemento);
                 
-                grupoElemento.getBoundingClientRect();
+                grupoElemento.getBoundingClientRect(); // Força o reflow para garantir a animação.
             }
             
-            // Atualiza a posição do elemento
-            grupoElemento.style.transform = `translate(${x}px, ${y}px)`;
+            // Atualiza a posição do elemento visual do nó.
+            grupoElemento.style.transform = `translate(${x}px, ${y}px) scale(1)`;
         });
-
-        // CRIAÇÃO E ATUALIZAÇÃO DE LIGAÇÕES ENTRE NÓS
         
-        // Remove ligações que não existem mais
+        // Remove as ligações visuais que não correspondem mais a conexões na árvore.
         elementosLigacoes.forEach((elemento, chave) => {
             if (!ligacoesParaDesenhar.has(chave)) {
-                // Aplica animação de saída
-                elemento.style.opacity = '0';
+                elemento.style.opacity = '0'; // Inicia a animação de fade-out.
                 
-                // Remove o elemento após a animação
+                // Remove o elemento do DOM após a conclusão da animação.
                 elemento.addEventListener('transitionend', () => elemento.remove());
                 
-                // Remove da estrutura de controle
-                elementosLigacoes.delete(chave);
+                elementosLigacoes.delete(chave); // Remove a ligação do mapa de elementos visuais.
             }
         });
 
-        // Cria ou atualiza as ligações existentes
+        // Cria ou atualiza as ligações visuais entre os nós.
         ligacoesParaDesenhar.forEach((posicao, chave) => {
             let linha = elementosLigacoes.get(chave);
             
-            // Se a ligação não existe, cria uma nova
+            // Se o elemento visual da ligação ainda não existe, cria um novo.
             if (!linha) {
                 linha = criarElementoLigacao(posicao.x1, posicao.y1);
                 elementosLigacoes.set(chave, linha);
                 
-                // Insere a ligação antes dos nós (para ficar atrás visualmente)
+                // Insere a ligação no SVG antes dos nós para garantir a ordem de renderização (fundo).
                 svg.insertBefore(linha, svg.firstChild);
                 
-                // Força um reflow
-                linha.getBoundingClientRect();
+                linha.getBoundingClientRect(); // Força o reflow para garantir a animação.
             }
             
-            // Atualiza a posição da linha
+            // Atualiza o atributo 'd' do path SVG para desenhar a linha entre as posições corretas.
             linha.setAttribute('d', `M${posicao.x1},${posicao.y1} L${posicao.x2},${posicao.y2}`);
-            linha.style.opacity = '1';
+            linha.style.opacity = '1'; // Garante que a linha esteja visível.
         });
     }
 
-    /**
-     * Cria um elemento visual SVG para representar um nó da árvore
-     * @param {number} valor - Valor do nó
-     * @param {number} x - Posição horizontal
-     * @param {number} y - Posição vertical
-     * @returns {SVGElement} - Elemento SVG do nó
-     */
+    //Cria e retorna um elemento SVG para representar visualmente um nó da árvore.
+
     function criarElementoNo(valor, x, y) {
-        // Cria um grupo SVG para conter o círculo e o texto
         const grupo = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         grupo.setAttribute('class', 'node');
         grupo.dataset.value = valor;
         
-        // Inicia com escala 0 e opacidade 0 para animação de entrada
+        // Define a transformação inicial para a animação de entrada.
         grupo.style.transform = `translate(${x}px, ${y}px) scale(0)`;
         grupo.style.opacity = '0';
 
-        // Cria o círculo que representa o nó
         const circulo = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-        circulo.setAttribute('r', 20); // Raio do círculo
+        circulo.setAttribute('r', 20); // Define o raio do círculo do nó.
 
-        // Cria o texto com o valor do nó
         const texto = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        texto.textContent = valor;
+        texto.textContent = valor; // Define o texto do nó como seu valor.
 
-        // Adiciona os elementos ao grupo
         grupo.appendChild(circulo);
         grupo.appendChild(texto);
 
-        // Aplica animação de entrada após um pequeno delay
+        // Aplica a animação de entrada após um pequeno atraso para transição suave.
         setTimeout(() => {
             grupo.style.transform = `translate(${x}px, ${y}px) scale(1)`;
             grupo.style.opacity = '1';
@@ -539,50 +438,39 @@ document.addEventListener('DOMContentLoaded', () => {
         return grupo;
     }
 
-    /**
-     * Cria um elemento visual SVG para representar uma ligação entre nós
-     * @param {number} x1 - Posição x inicial
-     * @param {number} y1 - Posição y inicial
-     * @returns {SVGElement} - Elemento SVG da ligação
-     */
+    
     function criarElementoLigacao(x1, y1) {
-        // Cria uma linha SVG
         const caminho = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         caminho.setAttribute('class', 'link');
         
-        // Inicia como um ponto (linha de comprimento zero)
+        // Inicia a ligação como um ponto para animação de entrada.
         caminho.setAttribute('d', `M${x1},${y1} L${x1},${y1}`);
         caminho.style.opacity = '0';
         
         return caminho;
     }
 
-    // FUNÇÃO DE DESTAQUE VISUAL PARA BUSCA
+    // FUNÇÃO DE DESTAQUE VISUAL PARA BUSCA 
 
-    /**
-     * Destaca o caminho percorrido durante uma busca
-     * @param {number} valor - Valor que foi buscado
-     */
     function destacarCaminho(valor) {
-        // Remove destaques anteriores
+        // Remove quaisquer destaques de operações anteriores.
         document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
         
-        // Obtém o caminho percorrido durante a busca
+        // Obtém a sequência de nós visitados durante a busca.
         const nosNoCaminho = arvore.buscar(valor, true);
         
-        // Se não há caminho, não faz nada
         if (!nosNoCaminho || nosNoCaminho.length === 0) return;
 
-        // Destaca cada nó no caminho
+        // Aplica o destaque a cada nó e ligação no caminho.
         for (let i = 0; i < nosNoCaminho.length; i++) {
             const elementoNo = elementosNos.get(nosNoCaminho[i].valor);
             
-            // Destaca o nó final se foi encontrado
+            // Destaca o nó final do caminho se ele corresponde ao valor buscado.
             if (elementoNo && i === nosNoCaminho.length - 1 && nosNoCaminho[i].valor === valor) {
                 elementoNo.classList.add('highlight');
             }
             
-            // Destaca as ligações no caminho
+            // Destaca as ligações entre os nós no caminho.
             if (i > 0) {
                 const chaveElementoLigacao = `${nosNoCaminho[i-1].valor}-${nosNoCaminho[i].valor}`;
                 const elementoLigacao = elementosLigacoes.get(chaveElementoLigacao);
@@ -592,32 +480,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Remove o destaque depois de um curto espaço de tempo
+        // Remove os destaques após um período para visualização temporária.
         setTimeout(() => {
             document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
         }, 2500);
     }
 
-    // FUNÇÃO PRINCIPAL PARA PROCESSAR AÇÕES DO USUÁRIO
+    // FUNÇÃO PRINCIPAL PARA PROCESSAR AÇÕES DO USUÁRIO - (inserir, remover, buscar)
 
-    /**
-     * Processa as ações do usuário (inserir, remover, buscar)
-     * @param {string} acao
-     */
     function processarAcao(acao) {
-        // Obtém e valida o valor inserido pelo usuário
-        const valor = parseInt(campoValor.value);
+        const valor = parseInt(campoValor.value); // Converte a entrada do usuário para um número inteiro.
         
-        // Verifica se o valor é um número válido
+        // Verifica se o valor é um número válido.
         if (isNaN(valor)) {
             adicionarLog('Erro: Por favor, insira um número válido.');
             return;
         }
 
-        // Executa a ação solicitada
+        // Executa a operação da Árvore Binária Busca com base na ação solicitada.
         switch (acao) {
             case 'inserir':
-                // Verifica se o valor já existe antes de inserir
                 if (arvore.buscar(valor)) {
                     adicionarLog(`Valor ${valor} já existe na árvore.`);
                 } else {
@@ -627,7 +509,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
                 
             case 'remover':
-                // Verifica se o valor existe antes de tentar remover
                 if (!arvore.buscar(valor)) {
                     adicionarLog(`Valor ${valor} não encontrado na árvore.`);
                 } else {
@@ -637,40 +518,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;
                 
             case 'buscar':
-                // Realiza a busca e informa o resultado
                 if (arvore.buscar(valor)) {
                     adicionarLog(`Valor ${valor} encontrado na árvore.`);
-                    destacarCaminho(valor); // Destaca o caminho visualmente
+                    destacarCaminho(valor); // Visualiza o caminho da busca.
                 } else {
                     adicionarLog(`Valor ${valor} não encontrado na árvore.`);
-                    destacarCaminho(valor); // Mostra o caminho percorrido mesmo sem encontrar
+                    destacarCaminho(valor); // Visualiza o caminho mesmo se não encontrado.
                 }
                 break;
         }
         
-        // Atualiza a visualização da árvore
-        desenharArvore();
+        desenharArvore(); // Atualiza a representação visual da árvore após a operação.
         
-        // Limpa o campo de entrada e retorna o foco para ele
-        campoValor.value = '';
-        campoValor.focus();
+        campoValor.value = ''; // Limpa o campo de entrada.
+        campoValor.focus();    // Retorna o foco para o campo de entrada para facilitar novas operações.
     }
 
     // CONFIGURAÇÃO DOS EVENTOS DA INTERFACE
 
-    // Botões de operações básicas
+    // Associa as funções de processamento de ação aos botões correspondentes.
     document.getElementById('btnInserir').addEventListener('click', () => processarAcao('inserir'));
     document.getElementById('btnRemover').addEventListener('click', () => processarAcao('remover'));
     document.getElementById('btnBuscar').addEventListener('click', () => processarAcao('buscar'));
     
-    // Permite inserir pressionando Enter no campo de valor
     campoValor.addEventListener('keyup', (evento) => {
         if (evento.key === 'Enter') {
             processarAcao('inserir');
         }
     });
     
-    // Botões de travessias - cada um executa um tipo diferente de percurso
+    // Associa as funções de travessia aos botões correspondentes, exibindo o resultado no log.
     document.getElementById('btnPreOrdem').addEventListener('click', () => {
         const resultado = arvore.preOrdem();
         adicionarLog(`Pré-Ordem (Raiz→Esq→Dir): [${resultado.join(', ')}]`);
@@ -691,12 +568,13 @@ document.addEventListener('DOMContentLoaded', () => {
         adicionarLog(`Busca em Largura (Por Níveis): [${resultado.join(', ')}]`);
     });
 
-    // INICIALIZAÇÃO
+    // INICIALIZAÇÃO DA APLICAÇÃO
 
-    // Observa mudanças no tamanho do SVG e redesenha a árvore quando necessário
-    // Isso garante que a árvore se adapte quando a janela é redimensionada
-    new ResizeObserver(desenharArvore).observe(svg);
+    // Utiliza ResizeObserver para detectar mudanças no tamanho do contêiner da árvore
+    // e redesenhar a árvore dinamicamente.
+    new ResizeObserver(() => {
+        setTimeout(desenharArvore, 10); // Pequeno delay para garantir que as dimensões estejam atualizadas.
+    }).observe(document.querySelector('.tree-panel'));
     
-    // Desenha a árvore
-    desenharArvore();
+    desenharArvore(); // Desenha a árvore inicialmente ao carregar a página.
 });

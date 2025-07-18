@@ -82,10 +82,14 @@ header {
     justify-content: center;
     overflow: auto;
     min-height: 0;
+    max-height: calc(100vh - 80px - 200px);
+    position: relative;
 }
 
 /* Seção do log */
 .log-section {
+    height: 200px;
+    flex-shrink: 0;
     padding: 0 1.5rem 1.5rem 1.5rem;
     background-color: var(--background-color);
     border-top: 1px solid var(--border-color);
@@ -178,13 +182,16 @@ button:disabled {
     box-shadow: none;
 }
 
-/* Estilos específicos para a área de log */
+
 .log-card {
     margin: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .log-area {
-    height: 120px;
+    flex: 1;
     background-color: var(--log-background);
     color: var(--log-text-color);
     border-radius: 8px;
@@ -195,7 +202,7 @@ button:disabled {
     line-height: 1.4;
     border: 2px solid var(--border-color);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-    
+    min-height: 0;
 
     scrollbar-width: thin;
     scrollbar-color: var(--secondary-color) var(--log-background);
@@ -231,7 +238,6 @@ button:disabled {
 
 /* Diferentes tipos de mensagens no log */
 .log-area p:last-child {
-
     background-color: rgba(66, 153, 225, 0.2);
     border-left: 3px solid var(--log-info-color);
     animation: highlight-new 0.5s ease-in-out;
@@ -281,15 +287,18 @@ button:disabled {
     }
 }
 
+
 #tree-svg {
     width: 100%;
     height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    overflow: visible;
 }
 
 /* --- Estilos de Animação para SVG --- */
 
 .node {
-    /* Anima a transição de posição */
     transition: transform 0.5s ease-in-out;
 }
 
@@ -297,7 +306,6 @@ button:disabled {
     fill: var(--node-color);
     stroke: var(--primary-color);
     stroke-width: 2px;
-    /* Anima a mudança de cor e raio */
     transition: fill 0.3s ease, r 0.3s ease;
 }
 
@@ -312,11 +320,9 @@ button:disabled {
 .link {
     stroke: var(--line-color);
     stroke-width: 2px;
-    /* Anima a posição e a opacidade */
     transition: d 0.5s ease-in-out, opacity 0.3s ease, stroke 0.3s ease;
 }
 
-/* Classes de estado para animação */
 .node.entering {
     transform: scale(0);
     opacity: 0;
@@ -363,35 +369,5 @@ button:disabled {
     50% { 
         stroke-width: 6px;
         opacity: 0.8;
-    }
-}
-
-
-@media (max-width: 768px) {
-    .main-content {
-        flex-direction: column;
-    }
-    
-    .controls-panel {
-        width: 100%;
-        max-height: 250px;
-        order: 1; /* Controles ficam no topo em telas pequenas */
-    }
-    
-    .tree-and-log-area {
-        order: 2; /* Árvore e log ficam abaixo dos controles */
-    }
-    
-    .tree-panel {
-        min-height: 300px; /* Altura mínima para a árvore em mobile */
-    }
-    
-    .log-area {
-        height: 80px; 
-        font-size: 0.8rem;
-    }
-    
-    .log-section {
-        padding: 0.75rem;
     }
 }
