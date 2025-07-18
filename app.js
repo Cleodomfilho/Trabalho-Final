@@ -90,12 +90,12 @@ class ArvoreBinariaDeBusca {
         this.raiz = this._removerNo(this.raiz, valor);
     }
 
-    // Método auxiliar recursivo para a remoção de nós.
+    // Método auxiliar para a remoção de nós.
     _removerNo(no, valor) {
         // Caso base: nó não existe na árvore.
         if (!no) return null;
         
-        // Busca o nó a ser removido na sub-árvore apropriada.
+        // Busca o nó a ser removido na sub-árvore.
         if (valor < no.valor) {
             no.esquerdo = this._removerNo(no.esquerdo, valor);
             return no;
@@ -128,7 +128,7 @@ class ArvoreBinariaDeBusca {
         }
     }
 
-    //Encontra o nó com o menor valor em uma sub-árvore dada.
+    //Encontra o nó com o menor valor na sub-árvore.
     _encontrarMenorNo(no) {
         while (no.esquerdo) {
             no = no.esquerdo;
@@ -190,7 +190,7 @@ class ArvoreBinariaDeBusca {
     //Realiza a Busca em Largura
 
     buscaEmLargura() {
-        const dados = []; // Armazena os valores dos nós na ordem BFS.
+        const dados = []; // Armazena os valores dos nós.
         const fila = []; // Fila para gerenciar os nós a serem visitados.
         
         // Inicia a Busca em largura
@@ -222,10 +222,10 @@ class ArvoreBinariaDeBusca {
         return this._calcularAlturaNo(this.raiz);
     }
 
-    //Método auxiliar recursivo para calcular a altura de uma sub-árvore.
+    //Método auxiliar para calcular a altura de uma sub-árvore.
 
     _calcularAlturaNo(no) {
-        if (!no) return 0; // A altura de um nó nulo é 0.
+        if (!no) return 0; 
         
         const alturaEsquerda = this._calcularAlturaNo(no.esquerdo);
         const alturaDireita = this._calcularAlturaNo(no.direito);
